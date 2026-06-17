@@ -1,29 +1,17 @@
 # metal
 
 ## Purpose
-[Describe the purpose of this SageLang library module.]
+Low-level hardware abstraction layer for bare-metal systems, embedded platforms, and kernel development.
 
 ## Features
-- [Feature 1]
-- [Feature 2]
-
-## Installation
-Add as a submodule to your SageLang project:
-```bash
-git submodule add <repository-url> core/lib/metal
-```
-
-## API Documentation
-[Link to detailed API documentation]
+- **Hardware Access**: GPIO, Timer, Serial, IRQ support.
+- **Graphics (Basic)**: VGA support for legacy display interaction.
 
 ## Usage Example
 ```sage
-import metal
-# Example usage...
+import metal.gpio
+import metal.timer
+
+metal.gpio.setup(1, metal.gpio.OUTPUT)
+metal.timer.sleep(1000)
 ```
-
-## Contributing
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
-
-## License
-MIT (or maintain main project license)
