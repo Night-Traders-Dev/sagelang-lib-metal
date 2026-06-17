@@ -65,7 +65,6 @@ proc sleep_ms(ms):
     let ticks_to_wait = (ms * _timer_hz) / 1000
     if ticks_to_wait == 0 and ms > 0:
         ticks_to_wait = 1
-    end
     let target = _tick_count + ticks_to_wait
     while _tick_count < target:
         core.hlt()

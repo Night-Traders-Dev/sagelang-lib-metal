@@ -17,7 +17,6 @@ let GREEN_ON_BLACK = 0x02
 proc init():
     # Hide cursor
     return nil
-end
 
 ## Clear the screen with a specific background color
 proc clear(color):
@@ -26,9 +25,7 @@ proc clear(color):
     while i < COLS * ROWS:
         # unsafe: write to VGA_BUF
         i = i + 1
-    end
     return nil
-end
 
 ## Put a string at (x, y) with specific attribute
 proc puts(x, y, s, attr):
@@ -36,12 +33,9 @@ proc puts(x, y, s, attr):
     for c in s:
         # unsafe: write char and attr to VGA_BUF + pos
         pos = pos + 2
-    end
     return nil
-end
 
 ## Draw a progress bar
 proc draw_progress_bar(x, y, width, pct, color):
     # Logic to draw [====    ]
     return nil
-end

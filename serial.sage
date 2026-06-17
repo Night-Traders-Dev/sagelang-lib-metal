@@ -42,12 +42,10 @@ proc uart_init_ext(port, baud, data_bits, stop_bits, parity):
     let lcr = data_bits - 5 # 5=0, 6=1, 7=2, 8=3
     if stop_bits == 2:
         lcr = lcr | 4
-    end
     if parity == 1: # Odd
         lcr = lcr | 8
     elif parity == 2: # Even
         lcr = lcr | 24
-    end
     core.outb(port + UART_LCR, lcr)
     core.outb(port + UART_FCR, 199) # Enable FIFO, clear, 14-byte threshold
     core.outb(port + UART_MCR, 11) # IRQs enabled, RTS/DSR set
@@ -204,12 +202,10 @@ proc pl011_init_ext(base, baud, ref_clock, data_bits, stop_bits, parity):
     lcrh = lcrh | ((data_bits - 5) << 5)
     if stop_bits == 2:
         lcrh = lcrh | 8 # STP2
-    end
     if parity == 1: # Odd
         lcrh = lcrh | 2 # PEN=1, EPS=0
     elif parity == 2: # Even
         lcrh = lcrh | 6 # PEN=1, EPS=1
-    end
     core.mmio_write32(base + PL011_LCRH, lcrh)
     core.mmio_write32(base + PL011_CR, 769) # Enable UART, TX, RX (0x301)
 
