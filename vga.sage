@@ -30,9 +30,12 @@ proc clear(color):
 ## Put a string at (x, y) with specific attribute
 proc puts(x, y, s, attr):
     let pos = (y * COLS + x) * 2
-    for c in s:
-        # unsafe: write char and attr to VGA_BUF + pos
-        pos = pos + 2
+    # Strings are not iterable with for-in; walk by index.
+    let n = len(s)
+    let i = 0
+    while i < n:
+        # unsafe: write char and attr to VGA_BUF + pos + i * 2
+        i = i + 1
     return nil
 
 ## Draw a progress bar
