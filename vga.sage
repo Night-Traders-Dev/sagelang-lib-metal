@@ -23,22 +23,40 @@ proc clear(color):
     let attr = color << 4
     let i = 0
     while i < COLS * ROWS:
-        # unsafe: write to VGA_BUF
+        let pos = VGA_BUF + (i * 2)
+        core.mmio_write8(pos, 32)
+        core.mmio_write8(pos + 1, attr)
         i = i + 1
     return nil
 
 ## Put a string at (x, y) with specific attribute
 proc puts(x, y, s, attr):
-    let pos = (y * COLS + x) * 2
-    # Strings are not iterable with for-in; walk by index.
+    let pos = VGA_BUF + ((y * COLS + x) * 2)
     let n = len(s)
     let i = 0
     while i < n:
-        # unsafe: write char and attr to VGA_BUF + pos + i * 2
+        core.mmio_write8(pos + (i * 2), ord(s[i]))
+        core.mmio_write8(pos + (i * 2) + 1, attr)
         i = i + 1
     return nil
 
 ## Draw a progress bar
 proc draw_progress_bar(x, y, width, pct, color):
-    # Logic to draw [====    ]
+    if width <= 2:
+        return nil
+    let inner_width = width - 2
+    let filled = (pct * inner_width) / 100
+    let pos = VGA_BUF + ((y * COLS + x) * 2)
+    core.mmio_write8(pos, ord("["))
+    core.mmio_write8(pos + 1, color)
+    let i = 0
+    while i < inner_width:
+        let ch = ord(" ")
+        if i < filled:
+            ch = ord("=")
+        core.mmio_write8(pos + ((i + 1) * 2), ch)
+        core.mmio_write8(pos + ((i + 1) * 2) + 1, color)
+        i = i + 1
+    core.mmio_write8(pos + (inner_width + 1) * 2, ord("]"))
+    core.mmio_write8(pos + (inner_width + 1) * 2 + 1, color)
     return nil

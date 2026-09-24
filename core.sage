@@ -26,52 +26,74 @@ proc getchar():
 ## ============================================================
 ## Port I/O (x86)
 ## ============================================================
+let _port8 = {}
+let _port16 = {}
+let _port32 = {}
+
 ## Write a byte to an I/O port
 proc outb(port, val):
-    mem_write(mem_alloc(1), 0, "byte", val)
+    _port8[str(port)] = val
 
 ## Read a byte from an I/O port
 proc inb(port):
+    let key = str(port)
+    if dict_has(_port8, key):
+        return _port8[key]
     return 0
 
 ## Write a 16-bit word to an I/O port
 proc outw(port, val):
-    mem_write(mem_alloc(2), 0, "int", val)
+    _port16[str(port)] = val
 
 ## Read a 16-bit word from an I/O port
 proc inw(port):
+    let key = str(port)
+    if dict_has(_port16, key):
+        return _port16[key]
     return 0
 
 ## Write a 32-bit dword to an I/O port
 proc outl(port, val):
-    mem_write(mem_alloc(4), 0, "int", val)
+    _port32[str(port)] = val
 
 ## Read a 32-bit dword from an I/O port
 proc inl(port):
+    let key = str(port)
+    if dict_has(_port32, key):
+        return _port32[key]
     return 0
 
 ## ============================================================
 ## Memory-Mapped I/O (MMIO)
 ## ============================================================
+let _mmio8 = {}
+let _mmio32 = {}
+let _cpu_id_value = 0
+let _cpu_id_register = 3489660928
+
 ## Read a 32-bit value from a physical address
 proc mmio_read32(addr):
-    let ptr = mem_alloc(4)
-    return mem_read(ptr, 0, "int")
+    let key = str(addr)
+    if dict_has(_mmio32, key):
+        return _mmio32[key]
+    return 0
 
 ## Write a 32-bit value to a physical address
 proc mmio_write32(addr, val):
-    let ptr = mem_alloc(4)
-    mem_write(ptr, 0, "int", val)
+    _mmio32[str(addr)] = val
+    if addr == _cpu_id_register:
+        _cpu_id_value = val
 
 ## Read a byte from a physical address
 proc mmio_read8(addr):
-    let ptr = mem_alloc(1)
-    return mem_read(ptr, 0, "byte")
+    let key = str(addr)
+    if dict_has(_mmio8, key):
+        return _mmio8[key]
+    return 0
 
 ## Write a byte to a physical address
 proc mmio_write8(addr, val):
-    let ptr = mem_alloc(1)
-    mem_write(ptr, 0, "byte", val)
+    _mmio8[str(addr)] = val
 
 ## ============================================================
 ## CPU Control
@@ -114,8 +136,7 @@ proc fence():
 
 ## Get current CPU core ID (e.g., 0 or 1 on RP2040)
 proc cpu_id():
-    # In a real driver, this would read a hardware register (e.g., MPROCID on ARM).
-    return 0
+    return _cpu_id_value
 
 ## Enter a critical section (disable interrupts + memory barrier)
 proc critical_section_enter():
